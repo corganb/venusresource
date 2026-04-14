@@ -299,14 +299,39 @@
     AKA.a = AKA.a_km / SCENE_UNIT_KM;
     AKA.period = AKA.period_days * 86400;
 
-    var mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.04, 16, 12),
-      new THREE.MeshBasicMaterial({ color: AKA.color })
-    );
+    // Akatsuki 3D satellite model: central body + 2 solar panels + antenna
+    function makeSatellite() {
+      var g = new THREE.Group();
+      var body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.04, 0.03, 0.03),
+        new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.45, metalness: 0.5 })
+      );
+      g.add(body);
+      var panelGeo = new THREE.PlaneGeometry(0.14, 0.05);
+      var panelMat = new THREE.MeshStandardMaterial({
+        color: 0x1a2a55, side: THREE.DoubleSide, roughness: 0.2, metalness: 0.6,
+        emissive: 0x0a1a44, emissiveIntensity: 0.3
+      });
+      var lp = new THREE.Mesh(panelGeo, panelMat);
+      lp.position.set(-0.11, 0, 0);
+      g.add(lp);
+      var rp = new THREE.Mesh(panelGeo, panelMat);
+      rp.position.set(0.11, 0, 0);
+      g.add(rp);
+      // Antenna dish
+      var dish = new THREE.Mesh(
+        new THREE.ConeGeometry(0.015, 0.02, 12, 1, true),
+        new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.3, metalness: 0.5, side: THREE.DoubleSide })
+      );
+      dish.position.set(0, 0.025, 0);
+      dish.rotation.x = Math.PI;
+      g.add(dish);
+      return g;
+    }
+    var mesh = makeSatellite();
     tiltGroup.add(mesh);
 
-    // Text sprite label - sized small so it doesn't dominate the planet.
-    // Sprite is attached to the mesh so it follows Akatsuki along its orbit.
+    // Text sprite label - small so it doesn't dominate the planet.
     var labelCanvas = document.createElement('canvas');
     labelCanvas.width = 256;
     labelCanvas.height = 48;
@@ -354,7 +379,7 @@
     // Animate Akatsuki along its orbit
     var SCENE_EPOCH_SEC = Date.now() / 1000;
     window.__venus_updateMoons = function() {
-      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * 500;
+      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * 300;
       var n = (Math.PI * 2) / AKA.period;
       var M = (n * simTime) % (Math.PI * 2);
       var E = solveKepler(M, AKA.e);
@@ -403,7 +428,7 @@
   // Animate
   function tick() {
     requestAnimationFrame(tick);
-    planet.rotation.y += -0.000040;
+    planet.rotation.y += -0.0000015;
     updateMoons();
     controls.update();
     renderer.render(scene, camera);
