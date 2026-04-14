@@ -213,7 +213,7 @@
   scene.background = new THREE.Color('#180e05');
 
   var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 10000);
-  camera.position.set(0, 4, 15);
+  camera.position.set(0, 1.2, 4);
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -277,8 +277,8 @@
   // periapsis 460 km, apoapsis 360,000 km, period 10.8 days.
   (function akatsuki() {
     var AKA = {
-      a_km: 180230,  // (460 + 360000) / 2 approximation
-      e: 0.9974,
+      a_km: 40000,   // visual approximation (real ~180230 km, compressed to fit scene)
+      e: 0.85,       // visual approximation (real ~0.9974, reduced so orbit fits)
       period_days: 10.8,
       color: 0xffddaa,
     };
