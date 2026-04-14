@@ -210,7 +210,7 @@
 (function initScene() {
   var canvas = document.getElementById('scene');
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color('#180e05');
+  scene.background = new THREE.Color('#000000');
 
   var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 10000);
   camera.position.set(0, 1.2, 4);
@@ -303,11 +303,13 @@
       return E;
     }
     var pts = [];
-    for (var k = 0; k <= 256; k++) {
-      var M = (k / 256) * Math.PI * 2;
-      var E = solveKepler(M, AKA.e);
-      var nu = 2 * Math.atan2(Math.sqrt(1 + AKA.e) * Math.sin(E/2), Math.sqrt(1 - AKA.e) * Math.cos(E/2));
-      var r = AKA.a * (1 - AKA.e * Math.cos(E));
+    var segs = 512;
+    for (var k = 0; k <= segs; k++) {
+      // Sample at uniform true anomaly so the curve is geometrically
+      // smooth regardless of eccentricity (uniform mean anomaly clusters
+      // points near apoapsis and produces jagged lines at high e)
+      var nu = (k / segs) * Math.PI * 2;
+      var r = AKA.a * (1 - AKA.e * AKA.e) / (1 + AKA.e * Math.cos(nu));
       pts.push(new THREE.Vector3(r * Math.cos(nu), 0, r * Math.sin(nu)));
     }
     tiltGroup.add(new THREE.Line(
