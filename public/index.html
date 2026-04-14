@@ -167,7 +167,7 @@
     <div class="info-row"><span>Lakshmi Planum</span><span style="font-size:9.5px;text-align:right">Volcanic plain in Ishtar Terra</span></div>
     <div class="info-row"><span>Venera 7 landing site</span><span style="font-size:9.5px;text-align:right">First successful landing (1970-12-15)</span></div>
     <div class="info-row"><span>Venera 13 landing site</span><span style="font-size:9.5px;text-align:right">First color surface images (1982)</span></div>
-    <div class="info-row"><span>Akatsuki orbiter</span><span style="font-size:9.5px;text-align:right">JAXA, highly elliptical e=0.997</span></div>
+    <div class="info-row"><span>Akatsuki orbit</span><span style="font-size:9.5px;text-align:right">JAXA Venus orbiter (elliptical, scale-compressed)</span></div>
 
 
     <h3>Resource Systems</h3>
@@ -277,8 +277,8 @@
   // periapsis 460 km, apoapsis 360,000 km, period 10.8 days.
   (function akatsuki() {
     var AKA = {
-      a_km: 40000,   // visual approximation (real ~180230 km, compressed to fit scene)
-      e: 0.85,       // visual approximation (real ~0.9974, reduced so orbit fits)
+      a_km: 50000,   // visual approximation (real ~180230 km, compressed to fit scene)
+      e: 0.75,       // visual approximation (real ~0.9974, reduced so periapsis clears Venus surface)
       period_days: 10.8,
       color: 0xffddaa,
     };
@@ -287,10 +287,30 @@
     AKA.period = AKA.period_days * 86400;
 
     var mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.06, 16, 12),
+      new THREE.SphereGeometry(0.14, 16, 12),
       new THREE.MeshBasicMaterial({ color: AKA.color })
     );
     tiltGroup.add(mesh);
+
+    // Text sprite label so users can identify the spacecraft
+    var labelCanvas = document.createElement('canvas');
+    labelCanvas.width = 256;
+    labelCanvas.height = 64;
+    var lctx = labelCanvas.getContext('2d');
+    lctx.font = 'bold 28px -apple-system, sans-serif';
+    lctx.textAlign = 'center';
+    lctx.textBaseline = 'middle';
+    lctx.strokeStyle = '#000';
+    lctx.lineWidth = 6;
+    lctx.strokeText('Akatsuki', 128, 32);
+    lctx.fillStyle = '#ffddaa';
+    lctx.fillText('Akatsuki', 128, 32);
+    var labelTex = new THREE.CanvasTexture(labelCanvas);
+    labelTex.needsUpdate = true;
+    var labelSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex, transparent: true, depthWrite: false, depthTest: false }));
+    labelSprite.scale.set(2.5, 0.6, 1);
+    labelSprite.position.set(0, 0.35, 0);
+    mesh.add(labelSprite);
 
     // Orbit path - highly elliptical
     function solveKepler(M, e) {
