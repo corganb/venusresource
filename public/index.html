@@ -208,7 +208,7 @@
   scene.background = new THREE.Color('#180e05');
 
   var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 10000);
-  camera.position.set(0, 1.2, 4);
+  camera.position.set(0, 4, 15);
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -226,7 +226,7 @@
   var texLoader = new THREE.TextureLoader();
   texLoader.crossOrigin = 'anonymous';
   var material = new THREE.MeshStandardMaterial({
-    map: texLoader.load('https://terraresource.net/assets/planet-textures/2k_venus_surface.jpg'),
+    map: texLoader.load('https://terraresource.net/assets/planet-textures/4k_venus_atmosphere.jpg'),
     roughness: 0.85,
     metalness: 0.0
   });
@@ -234,9 +234,98 @@
   // Tilt group holds the axial tilt; planet spins around its local Y
   // axis inside the tilt group, so sidereal rotation is correct.
   var tiltGroup = new THREE.Group();
-  tiltGroup.rotation.z = 3.095516; // 177.36 deg axial tilt
+  tiltGroup.rotation.z = 3.095516; // 177.36 deg axial tilt (Venus is effectively upside down)
   scene.add(tiltGroup);
   tiltGroup.add(planet);
+
+  // ═══ SURFACE FEATURE MARKERS (child of planet - rotates with spin) ═══
+  function addSurfaceMarker(lat_deg, lon_deg, color, size) {
+    var lat = lat_deg * Math.PI / 180;
+    var lon = lon_deg * Math.PI / 180;
+    var r = 1.52;
+    var mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(size, 16, 12),
+      new THREE.MeshBasicMaterial({ color: color })
+    );
+    mesh.position.set(
+      r * Math.cos(lat) * Math.cos(lon),
+      r * Math.sin(lat),
+      r * Math.cos(lat) * Math.sin(lon)
+    );
+    planet.add(mesh);
+    return mesh;
+  }
+  // Maxwell Montes: highest mountain on Venus (~11 km), in Ishtar Terra, 65N 3E
+  addSurfaceMarker(65, 3, 0xffcc77, 0.08);
+  // Aphrodite Terra: largest "continent" highland, along the equator 0 100E
+  addSurfaceMarker(0, 100, 0xffaa55, 0.07);
+  // Lakshmi Planum: volcanic plain in Ishtar Terra, 70N 350E
+  addSurfaceMarker(70, 350, 0xff8833, 0.05);
+  // Venera 7 landing site: first successful landing on another planet (1970-12-15), -5N 351E
+  addSurfaceMarker(-5, 351, 0x8888ff, 0.04);
+  // Venera 13 landing site: first color images from Venus surface (1982-03-01), -7.5N 303E
+  addSurfaceMarker(-7.5, 303, 0x8888ff, 0.04);
+
+  // ═══ AKATSUKI ORBITER MARKER (JAXA) ═══
+  // Akatsuki (aka Planet-C / Venus Climate Orbiter) is the only active
+  // spacecraft at Venus as of 2026. Highly elliptical orbit:
+  // periapsis 460 km, apoapsis 360,000 km, period 10.8 days.
+  (function akatsuki() {
+    var AKA = {
+      a_km: 180230,  // (460 + 360000) / 2 approximation
+      e: 0.9974,
+      period_days: 10.8,
+      color: 0xffddaa,
+    };
+    var SCENE_UNIT_KM = 6051 / 1.5;  // Venus radius
+    AKA.a = AKA.a_km / SCENE_UNIT_KM;
+    AKA.period = AKA.period_days * 86400;
+
+    var mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.06, 16, 12),
+      new THREE.MeshBasicMaterial({ color: AKA.color })
+    );
+    tiltGroup.add(mesh);
+
+    // Orbit path - highly elliptical
+    function solveKepler(M, e) {
+      var E = M;
+      for (var i = 0; i < 12; i++) {
+        var f = E - e * Math.sin(E) - M;
+        var fp = 1 - e * Math.cos(E);
+        E -= f / fp;
+      }
+      return E;
+    }
+    var pts = [];
+    for (var k = 0; k <= 256; k++) {
+      var M = (k / 256) * Math.PI * 2;
+      var E = solveKepler(M, AKA.e);
+      var nu = 2 * Math.atan2(Math.sqrt(1 + AKA.e) * Math.sin(E/2), Math.sqrt(1 - AKA.e) * Math.cos(E/2));
+      var r = AKA.a * (1 - AKA.e * Math.cos(E));
+      pts.push(new THREE.Vector3(r * Math.cos(nu), 0, r * Math.sin(nu)));
+    }
+    tiltGroup.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color: AKA.color, transparent: true, opacity: 0.35 })
+    ));
+
+    // Animate Akatsuki along its orbit
+    var SCENE_EPOCH_SEC = Date.now() / 1000;
+    window.__venus_updateMoons = function() {
+      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * 500;
+      var n = (Math.PI * 2) / AKA.period;
+      var M = (n * simTime) % (Math.PI * 2);
+      var E = solveKepler(M, AKA.e);
+      var nu = 2 * Math.atan2(Math.sqrt(1 + AKA.e) * Math.sin(E/2), Math.sqrt(1 - AKA.e) * Math.cos(E/2));
+      var r = AKA.a * (1 - AKA.e * Math.cos(E));
+      mesh.position.set(r * Math.cos(nu), 0, r * Math.sin(nu));
+    };
+  })();
+
+  function updateMoons() {
+    if (window.__venus_updateMoons) window.__venus_updateMoons();
+  }
 
   // Subtle starfield
   (function stars() {
@@ -261,7 +350,7 @@
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.minDistance = 2.2;
-  controls.maxDistance = 40;
+  controls.maxDistance = 200;
 
   // Resize
   window.addEventListener('resize', function () {
@@ -274,6 +363,7 @@
   function tick() {
     requestAnimationFrame(tick);
     planet.rotation.y += -0.000040;
+    updateMoons();
     controls.update();
     renderer.render(scene, camera);
   }
