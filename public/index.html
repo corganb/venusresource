@@ -229,12 +229,12 @@
   sun.position.set(5, 2, 5);
   scene.add(sun);
 
-  // Planet sphere
+  // Planet sphere with NASA-style surface texture from Terra CDN
   var geometry = new THREE.SphereGeometry(1.5, 96, 64);
+  var texLoader = new THREE.TextureLoader();
+  texLoader.crossOrigin = 'anonymous';
   var material = new THREE.MeshStandardMaterial({
-    color: new THREE.Color('#e8dcc0'),
-    emissive: new THREE.Color('#000000'),
-    emissiveIntensity: 0.15,
+    map: texLoader.load('https://terraresource.net/assets/planet-textures/2k_venus_surface.jpg'),
     roughness: 0.85,
     metalness: 0.0
   });
