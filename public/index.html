@@ -239,8 +239,12 @@
     metalness: 0.0
   });
   var planet = new THREE.Mesh(geometry, material);
-  scene.add(planet);
-  planet.rotation.z = 3.095516; // 177.36 deg axial tilt
+  // Tilt group holds the axial tilt; planet spins around its local Y
+  // axis inside the tilt group, so sidereal rotation is correct.
+  var tiltGroup = new THREE.Group();
+  tiltGroup.rotation.z = 3.095516; // 177.36 deg axial tilt
+  scene.add(tiltGroup);
+  tiltGroup.add(planet);
 
   // Subtle starfield
   (function stars() {
