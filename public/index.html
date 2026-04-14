@@ -276,9 +276,22 @@
   // spacecraft at Venus as of 2026. Highly elliptical orbit:
   // periapsis 460 km, apoapsis 360,000 km, period 10.8 days.
   (function akatsuki() {
+    // Real orbital elements from JAXA mission data (2016 post-insertion):
+    //   Periapsis altitude: ~460 km (6,511 km from Venus center)
+    //   Apoapsis distance:  ~360,000 km from center
+    //   Semi-major axis:    183,255 km
+    //   Eccentricity:       0.9645
+    //   Period:             10.8 days (after 2016 orbit change)
+    //   Inclination:        ~172 deg (essentially equatorial retrograde)
+    //
+    // At scene scale (1 unit = 4,034 km for Venus radius 1.5), the orbit
+    // stretches from ~1.61 units (periapsis, just above surface) to
+    // ~89.1 units (apoapsis, far outside the default camera frame).
+    // Users must zoom out significantly to see the full orbit; the close
+    // default camera shows Venus and the periapsis region.
     var AKA = {
-      a_km: 50000,   // visual approximation (real ~180230 km, compressed to fit scene)
-      e: 0.75,       // visual approximation (real ~0.9974, reduced so periapsis clears Venus surface)
+      a_km: 183255,
+      e: 0.9645,
       period_days: 10.8,
       color: 0xffddaa,
     };
@@ -287,29 +300,30 @@
     AKA.period = AKA.period_days * 86400;
 
     var mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.14, 16, 12),
+      new THREE.SphereGeometry(0.04, 16, 12),
       new THREE.MeshBasicMaterial({ color: AKA.color })
     );
     tiltGroup.add(mesh);
 
-    // Text sprite label so users can identify the spacecraft
+    // Text sprite label - sized small so it doesn't dominate the planet.
+    // Sprite is attached to the mesh so it follows Akatsuki along its orbit.
     var labelCanvas = document.createElement('canvas');
     labelCanvas.width = 256;
-    labelCanvas.height = 64;
+    labelCanvas.height = 48;
     var lctx = labelCanvas.getContext('2d');
-    lctx.font = 'bold 28px -apple-system, sans-serif';
+    lctx.font = 'bold 22px -apple-system, sans-serif';
     lctx.textAlign = 'center';
     lctx.textBaseline = 'middle';
     lctx.strokeStyle = '#000';
-    lctx.lineWidth = 6;
-    lctx.strokeText('Akatsuki', 128, 32);
+    lctx.lineWidth = 4;
+    lctx.strokeText('Akatsuki', 128, 24);
     lctx.fillStyle = '#ffddaa';
-    lctx.fillText('Akatsuki', 128, 32);
+    lctx.fillText('Akatsuki', 128, 24);
     var labelTex = new THREE.CanvasTexture(labelCanvas);
     labelTex.needsUpdate = true;
     var labelSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex, transparent: true, depthWrite: false, depthTest: false }));
-    labelSprite.scale.set(2.5, 0.6, 1);
-    labelSprite.position.set(0, 0.35, 0);
+    labelSprite.scale.set(0.5, 0.094, 1);
+    labelSprite.position.set(0, 0.1, 0);
     mesh.add(labelSprite);
 
     // Orbit path - highly elliptical
