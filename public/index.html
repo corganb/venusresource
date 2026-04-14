@@ -199,7 +199,7 @@
 <!-- Three.js (via jsdelivr UMD) -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="resource-systems-core.js?v=10"></script>
+<script src="resource-systems-core.js?v=11"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
@@ -379,7 +379,7 @@
     // Animate Akatsuki along its orbit
     var SCENE_EPOCH_SEC = Date.now() / 1000;
     window.__venus_updateMoons = function() {
-      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * 300;
+      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * 60;
       var n = (Math.PI * 2) / AKA.period;
       var M = (n * simTime) % (Math.PI * 2);
       var E = solveKepler(M, AKA.e);
@@ -392,6 +392,90 @@
   function updateMoons() {
     if (window.__venus_updateMoons) window.__venus_updateMoons();
   }
+
+
+  // ═══ SOLAR SYSTEM CONTEXT LAYER ═══
+  // Renders the Sun + 7 other planets as labeled markers on a celestial
+  // sphere around the primary body (radius 15 scene units). Directions
+  // use real heliocentric Kepler positions from RS.getPlanetPositionXYZ
+  // - only the direction is visualized, not the distance. Click any
+  // marker to open that body's sibling site in a new tab.
+  var solarSystemGroup;
+  (function buildSolarSystemLayer() {
+    var PRIMARY_NAME = 'Venus';
+    var RADIUS = 15;
+    var BODIES = [
+      { name: 'Sun',     color: '#FFD54F', url: 'https://sunresource.net' },
+      { name: 'Mercury', color: '#a0a0a0', url: 'https://mercuryresource.net' },
+      { name: 'Venus',   color: '#e8dcc0', url: 'https://venusresource.net' },
+      { name: 'Earth',   color: '#4da6ff', url: 'https://terraresource.net' },
+      { name: 'Mars',    color: '#c45030', url: 'https://marsresource.net' },
+      { name: 'Jupiter', color: '#c88040', url: 'https://jupiterresource.net' },
+      { name: 'Saturn',  color: '#d4b46a', url: 'https://saturnresource.net' },
+      { name: 'Uranus',  color: '#7ec8d4', url: 'https://uranusresource.net' },
+      { name: 'Neptune', color: '#4060d4', url: 'https://neptuneresource.net' },
+    ];
+
+    // Compute primary body's heliocentric position. Sun is at origin.
+    var primaryHelio;
+    if (PRIMARY_NAME === 'Sun') {
+      primaryHelio = { x: 0, y: 0, z: 0 };
+    } else if (window.RS && RS.getPlanetPositionXYZ) {
+      primaryHelio = RS.getPlanetPositionXYZ(PRIMARY_NAME) || { x: 0, y: 0, z: 0 };
+    } else {
+      primaryHelio = { x: 0, y: 0, z: 0 };
+    }
+
+    solarSystemGroup = new THREE.Group();
+    scene.add(solarSystemGroup);
+
+    BODIES.forEach(function(b) {
+      if (b.name === PRIMARY_NAME) return;
+
+      var helio;
+      if (b.name === 'Sun') {
+        helio = { x: 0, y: 0, z: 0 };
+      } else if (window.RS && RS.getPlanetPositionXYZ) {
+        helio = RS.getPlanetPositionXYZ(b.name) || { x: 1e11, y: 0, z: 0 };
+      } else {
+        helio = { x: 1e11, y: 0, z: 0 };
+      }
+
+      var dx = helio.x - primaryHelio.x;
+      var dy = helio.y - primaryHelio.y;
+      var dz = helio.z - primaryHelio.z;
+      var mag = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (mag === 0) return;
+      var ux = dx / mag, uy = dy / mag, uz = dz / mag;
+
+      // Marker sphere
+      var markerGeo = new THREE.SphereGeometry(0.18, 16, 12);
+      var markerMat = new THREE.MeshBasicMaterial({ color: b.color });
+      var marker = new THREE.Mesh(markerGeo, markerMat);
+      marker.position.set(ux * RADIUS, uz * RADIUS, uy * RADIUS); // swap y<->z for Three.js convention
+      marker.userData.url = b.url;
+      solarSystemGroup.add(marker);
+
+      // Canvas text label
+      var c = document.createElement('canvas');
+      c.width = 256; c.height = 48;
+      var lctx = c.getContext('2d');
+      lctx.font = 'bold 22px -apple-system, sans-serif';
+      lctx.textAlign = 'center'; lctx.textBaseline = 'middle';
+      lctx.strokeStyle = '#000'; lctx.lineWidth = 4;
+      lctx.strokeText(b.name, 128, 24);
+      lctx.fillStyle = b.color;
+      lctx.fillText(b.name, 128, 24);
+      var tex = new THREE.CanvasTexture(c);
+      var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
+      sp.scale.set(0.8, 0.15, 1);
+      sp.position.set(0, 0.3, 0);
+      marker.add(sp);
+    });
+
+    // Start visible so users see the context immediately
+    solarSystemGroup.visible = true;
+  })();
 
   // Subtle starfield
   (function stars() {
@@ -428,7 +512,7 @@
   // Animate
   function tick() {
     requestAnimationFrame(tick);
-    planet.rotation.y += -0.0000015;
+    planet.rotation.y += -0.0000003;
     updateMoons();
     controls.update();
     renderer.render(scene, camera);
