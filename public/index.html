@@ -70,9 +70,7 @@
   }
   html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--t1); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   body { display: flex; flex-direction: column; }
-
-  /* Loader */
-  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
+   }
 
   /* Top bar */
   .topbar { height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border-bottom: 1px solid var(--b1); flex-shrink: 0; z-index: 100; position: relative; }
@@ -124,7 +122,7 @@
   #dsn-panel { position: absolute; right: 10px; bottom: 10px; width: 260px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border: 1px solid var(--b1); border-radius: 8px; padding: 10px 12px; font-size: 10px; color: var(--t3); max-height: 220px; overflow-y: auto; }
   #dsn-panel .dsn-head { display: flex; align-items: center; gap: 6px; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); margin-bottom: 6px; }
   #dsn-panel .dsn-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; flex-shrink: 0; }
-  @keyframes dsn-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+   }
   @media (max-width: 600px) {
     #dsn-panel { max-width: 84vw; width: 84vw; max-height: 34vh; bottom: 4px; right: 4px; font-size: 9.5px; }
   }
@@ -148,6 +146,12 @@
   .ly-body { flex: 1; min-width: 0; }
   .ly-name { font-size: 11.5px; color: var(--t2); font-weight: 500; }
   .ly-desc { font-size: 9.5px; color: var(--t4); margin-top: 2px; line-height: 1.35; }
+
+  .time-ctl { padding: 8px 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 10px; color: var(--t3); border-top: 1px solid var(--b1); margin-top: 8px; }
+  .time-ctl label { text-transform: uppercase; letter-spacing: 0.08em; color: var(--t4); font-size: 9px; flex-basis: 100%; margin-bottom: 2px; }
+  .time-ctl button { background: transparent; border: 1px solid var(--b2); color: var(--t2); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+  .time-ctl button.on { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+  .time-ctl button:hover { border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -186,6 +190,13 @@
 
     <h3>Layers</h3>
     <div id="layer-list"></div>
+    <div class="time-ctl" id="time-ctl">
+      <label>Sim speed</label>
+      <button data-speed="0">0x</button>
+      <button data-speed="60" class="on">60x</button>
+      <button data-speed="300">300x</button>
+      <button data-speed="1000">1000x</button>
+    </div>
 
 
     <h3>Resource Systems</h3>
@@ -217,7 +228,7 @@
 <!-- Three.js (via jsdelivr UMD) -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="resource-systems-core.js?v=11"></script>
+<script src="resource-systems-core.js?v=12"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
@@ -402,7 +413,7 @@
     // Animate Akatsuki along its orbit
     var SCENE_EPOCH_SEC = Date.now() / 1000;
     window.__venus_updateMoons = function() {
-      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * 60;
+      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * ((typeof window !== "undefined" && window.__rs_time_scale != null) ? window.__rs_time_scale : 60);
       var n = (Math.PI * 2) / AKA.period;
       var M = (n * simTime) % (Math.PI * 2);
       var E = solveKepler(M, AKA.e);
@@ -590,6 +601,25 @@
   }
   renderLayerList();
 
+
+  // ═══ TIME SCALE CONTROL ═══
+  // window.__rs_time_scale is read every frame by updateMoons() and used
+  // instead of the hardcoded 60x multiplier so users can pause or
+  // speed up the simulation from the sidebar.
+  window.__rs_time_scale = 60;
+  (function timeCtl() {
+    var el = document.getElementById('time-ctl');
+    if (!el) return;
+    el.querySelectorAll('button').forEach(function(b) {
+      b.addEventListener('click', function() {
+        var v = parseInt(b.getAttribute('data-speed'), 10);
+        window.__rs_time_scale = v;
+        el.querySelectorAll('button').forEach(function(x) { x.classList.remove('on'); });
+        b.classList.add('on');
+      });
+    });
+  })();
+
 })();
 
 // ═══ TOP BAR WIRING (shared core) ═══
@@ -642,7 +672,7 @@
           html += '</div>';
         });
         content.innerHTML = html;
-        if (dot) { dot.style.background = '#4ade80'; dot.style.animation = 'dsn-pulse 2s infinite'; }
+        if (dot) { dot.style.background = '#4ade80'; }
       })
       .catch(function() {
         var dot = document.getElementById('dsn-dot');
