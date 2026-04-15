@@ -249,7 +249,7 @@
   var texLoader = new THREE.TextureLoader();
   texLoader.crossOrigin = 'anonymous';
   var material = new THREE.MeshStandardMaterial({
-    map: texLoader.load('https://terraresource.net/assets/planet-textures/4k_venus_atmosphere.jpg'),
+    map: texLoader.load('https://terraresource.net/assets/planet-textures/4k_venus_atmosphere.jpg', function(t) { t.anisotropy = renderer.capabilities.getMaxAnisotropy(); t.minFilter = THREE.LinearMipmapLinearFilter; t.needsUpdate = true; }),
     roughness: 0.85,
     metalness: 0.0
   });
