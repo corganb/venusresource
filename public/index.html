@@ -411,9 +411,14 @@
     akatsukiGroup.add(akatsukiOrbitLine);
 
     // Animate Akatsuki along its orbit
-    var SCENE_EPOCH_SEC = Date.now() / 1000;
+    var __rs_sim_time = 0;
+  var __rs_last_wall = Date.now() / 1000;
     window.__venus_updateMoons = function() {
-      var simTime = (Date.now() / 1000 - SCENE_EPOCH_SEC) * ((typeof window !== "undefined" && window.__rs_time_scale != null) ? window.__rs_time_scale : 60);
+      var __rs_now = Date.now() / 1000;
+    var __rs_ts = ((typeof window !== "undefined" && window.__rs_time_scale != null) ? window.__rs_time_scale : 60);
+    __rs_sim_time += (__rs_now - __rs_last_wall) * __rs_ts;
+    __rs_last_wall = __rs_now;
+    var simTime = __rs_sim_time;
       var n = (Math.PI * 2) / AKA.period;
       var M = (n * simTime) % (Math.PI * 2);
       var E = solveKepler(M, AKA.e);
