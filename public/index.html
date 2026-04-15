@@ -733,6 +733,47 @@
   setInterval(poll, 45000);
 })();
 
+
+  // ═══ KEYBOARD SHORTCUTS ═══
+  // Space: toggle pause/resume (saves current speed when pausing so it
+  // restores on the next press). R: reset view. 1/2/3/4: speed 0/60/300/1000.
+  // We ignore keypresses that originate from form fields so the hotkeys
+  // don't fight with text input if someone ever adds one later.
+  (function hotkeys() {
+    var savedSpeed = 60;
+    document.addEventListener('keydown', function(ev) {
+      var tag = (ev.target && ev.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || ev.target.isContentEditable) return;
+      if (ev.code === 'Space') {
+        ev.preventDefault();
+        var cur = window.__rs_time_scale != null ? window.__rs_time_scale : 60;
+        if (cur === 0) {
+          window.__rs_time_scale = savedSpeed || 60;
+        } else {
+          savedSpeed = cur;
+          window.__rs_time_scale = 0;
+        }
+        // Reflect state in time-ctl buttons if present
+        var ctl = document.getElementById('time-ctl');
+        if (ctl) ctl.querySelectorAll('button').forEach(function(b) {
+          b.classList.toggle('on', parseInt(b.getAttribute('data-speed'), 10) === window.__rs_time_scale);
+        });
+      } else if (ev.key === 'r' || ev.key === 'R') {
+        var rv = document.getElementById('reset-view');
+        if (rv) rv.click();
+      } else if (['1','2','3','4'].indexOf(ev.key) !== -1) {
+        var map = {'1':0, '2':60, '3':300, '4':1000};
+        var v = map[ev.key];
+        window.__rs_time_scale = v;
+        savedSpeed = v || savedSpeed;
+        var ctl2 = document.getElementById('time-ctl');
+        if (ctl2) ctl2.querySelectorAll('button').forEach(function(b) {
+          b.classList.toggle('on', parseInt(b.getAttribute('data-speed'), 10) === v);
+        });
+      }
+    });
+  })();
+
 // ═══ AUTH INIT ═══
 (function initAuth() {
   if (RS && RS.checkSession) {
