@@ -124,6 +124,16 @@
 
   /* Toast */
   #rs-toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 300; background: rgba(14,16,20,0.92); backdrop-filter: blur(12px); border: 1px solid var(--b2); border-radius: 8px; padding: 8px 18px; font-size: 12px; color: var(--t1); pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+
+  /* Interactive layer list (shared pattern across all planet sites) */
+  .ly-item { display: flex; gap: 8px; align-items: flex-start; padding: 6px 4px; border-bottom: 1px dashed rgba(255,255,255,0.04); cursor: pointer; user-select: none; }
+  .ly-item:hover { background: rgba(255,255,255,0.02); }
+  .ly-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--b2); flex-shrink: 0; margin-top: 2px; background: transparent; cursor: pointer; position: relative; }
+  .ly-check.on { background: var(--accent); border-color: var(--accent); }
+  .ly-check.on::after { content: ''; position: absolute; left: 3px; top: 0px; width: 5px; height: 9px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .ly-body { flex: 1; min-width: 0; }
+  .ly-name { font-size: 11.5px; color: var(--t2); font-weight: 500; }
+  .ly-desc { font-size: 9.5px; color: var(--t4); margin-top: 2px; line-height: 1.35; }
 </style>
 </head>
 <body>
@@ -160,14 +170,8 @@
     <div class="info-row"><span>Sidereal day</span><span>243 d retrograde</span></div>
     <div class="info-row"><span>Dist. from Sun</span><span>108.2 M km (0.723 AU)</span></div>
 
-    <h3>Scientific Layers</h3>
-    <div class="info-row"><span>Venus atmosphere</span><span style="font-size:9.5px;text-align:right">4K Akatsuki/Venus Express cloud imagery</span></div>
-    <div class="info-row"><span>Maxwell Montes</span><span style="font-size:9.5px;text-align:right">Highest peak (~11 km), 65N 3E</span></div>
-    <div class="info-row"><span>Aphrodite Terra</span><span style="font-size:9.5px;text-align:right">Equatorial highland "continent"</span></div>
-    <div class="info-row"><span>Lakshmi Planum</span><span style="font-size:9.5px;text-align:right">Volcanic plain in Ishtar Terra</span></div>
-    <div class="info-row"><span>Venera 7 landing site</span><span style="font-size:9.5px;text-align:right">First successful landing (1970-12-15)</span></div>
-    <div class="info-row"><span>Venera 13 landing site</span><span style="font-size:9.5px;text-align:right">First color surface images (1982)</span></div>
-    <div class="info-row"><span>Akatsuki orbit</span><span style="font-size:9.5px;text-align:right">JAXA Venus orbiter (elliptical, scale-compressed)</span></div>
+    <h3>Layers</h3>
+    <div id="layer-list"></div>
 
 
     <h3>Resource Systems</h3>
@@ -190,7 +194,7 @@
   <div class="statusbar-cell"><span class="label">FRAME</span><span class="value">Body-Fixed</span></div>
   <div class="statusbar-cell"><span class="label">BODY</span><span class="value">Venus</span></div>
   <div class="sb-cells-right">
-    <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.1</span></div>
+    <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.2</span></div>
   </div>
 </div>
 
@@ -244,7 +248,14 @@
   tiltGroup.add(planet);
 
   // ═══ SURFACE FEATURE MARKERS (child of planet - rotates with spin) ═══
-  function addSurfaceMarker(lat_deg, lon_deg, color, size) {
+  // Grouped so the "Surface features" toggle hides montes/terra/planum and
+  // the "Venera landing sites" toggle hides just the Venera markers.
+  var surfaceFeatures = new THREE.Group();
+  var veneraGroup = new THREE.Group();
+  planet.add(surfaceFeatures);
+  planet.add(veneraGroup);
+
+  function addSurfaceMarker(lat_deg, lon_deg, color, size, parent) {
     var lat = lat_deg * Math.PI / 180;
     var lon = lon_deg * Math.PI / 180;
     var r = 1.52;
@@ -257,24 +268,21 @@
       r * Math.sin(lat),
       r * Math.cos(lat) * Math.sin(lon)
     );
-    planet.add(mesh);
+    (parent || surfaceFeatures).add(mesh);
     return mesh;
   }
-  // Maxwell Montes: highest mountain on Venus (~11 km), in Ishtar Terra, 65N 3E
-  addSurfaceMarker(65, 3, 0xffcc77, 0.08);
-  // Aphrodite Terra: largest "continent" highland, along the equator 0 100E
-  addSurfaceMarker(0, 100, 0xffaa55, 0.07);
-  // Lakshmi Planum: volcanic plain in Ishtar Terra, 70N 350E
-  addSurfaceMarker(70, 350, 0xff8833, 0.05);
-  // Venera 7 landing site: first successful landing on another planet (1970-12-15), -5N 351E
-  addSurfaceMarker(-5, 351, 0x8888ff, 0.04);
-  // Venera 13 landing site: first color images from Venus surface (1982-03-01), -7.5N 303E
-  addSurfaceMarker(-7.5, 303, 0x8888ff, 0.04);
+  addSurfaceMarker(65, 3, 0xffcc77, 0.08);      // Maxwell Montes: highest peak ~11 km
+  addSurfaceMarker(0, 100, 0xffaa55, 0.07);     // Aphrodite Terra: equatorial continent
+  addSurfaceMarker(70, 350, 0xff8833, 0.05);    // Lakshmi Planum: Ishtar Terra volcanic plain
+  addSurfaceMarker(-5, 351, 0x8888ff, 0.04, veneraGroup);   // Venera 7 (1970-12-15)
+  addSurfaceMarker(-7.5, 303, 0x8888ff, 0.04, veneraGroup); // Venera 13 (1982-03-01)
 
   // ═══ AKATSUKI ORBITER MARKER (JAXA) ═══
-  // Akatsuki (aka Planet-C / Venus Climate Orbiter) is the only active
-  // spacecraft at Venus as of 2026. Highly elliptical orbit:
-  // periapsis 460 km, apoapsis 360,000 km, period 10.8 days.
+  // Akatsuki is parented to akatsukiGroup so the sidebar can toggle the
+  // satellite mesh, its label, and its orbit line as a single unit.
+  var akatsukiGroup = new THREE.Group();
+  var akatsukiOrbitLine;
+  tiltGroup.add(akatsukiGroup);
   (function akatsuki() {
     // Real orbital elements from JAXA mission data (2016 post-insertion):
     //   Periapsis altitude: ~460 km (6,511 km from Venus center)
@@ -329,7 +337,7 @@
       return g;
     }
     var mesh = makeSatellite();
-    tiltGroup.add(mesh);
+    akatsukiGroup.add(mesh);
 
     // Text sprite label - small so it doesn't dominate the planet.
     var labelCanvas = document.createElement('canvas');
@@ -371,10 +379,11 @@
       var r = AKA.a * (1 - AKA.e * AKA.e) / (1 + AKA.e * Math.cos(nu));
       pts.push(new THREE.Vector3(r * Math.cos(nu), 0, r * Math.sin(nu)));
     }
-    tiltGroup.add(new THREE.Line(
+    akatsukiOrbitLine = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pts),
       new THREE.LineBasicMaterial({ color: AKA.color, transparent: true, opacity: 0.35 })
-    ));
+    );
+    akatsukiGroup.add(akatsukiOrbitLine);
 
     // Animate Akatsuki along its orbit
     var SCENE_EPOCH_SEC = Date.now() / 1000;
@@ -477,7 +486,8 @@
     solarSystemGroup.visible = true;
   })();
 
-  // Subtle starfield
+  // Subtle starfield (toggleable).
+  var starfield;
   (function stars() {
     var geo = new THREE.BufferGeometry();
     var count = 3000;
@@ -492,7 +502,8 @@
     }
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     var mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, sizeAttenuation: false, transparent: true, opacity: 0.8 });
-    scene.add(new THREE.Points(geo, mat));
+    starfield = new THREE.Points(geo, mat);
+    scene.add(starfield);
   })();
 
   // Controls
@@ -518,6 +529,52 @@
     renderer.render(scene, camera);
   }
   tick();
+
+  // ═══ INTERACTIVE LAYER LIST ═══
+  var LAYERS = [
+    { id: 'surface',  name: 'Venus atmosphere', desc: '4K Akatsuki cloud imagery (JAXA)', visible: true },
+    { id: 'features', name: 'Surface features', desc: 'Maxwell, Aphrodite, Lakshmi', visible: true },
+    { id: 'venera',   name: 'Venera landing sites', desc: 'Venera 7 (1970) and 13 (1982)', visible: true },
+    { id: 'akatsuki', name: 'Akatsuki orbiter',  desc: 'JAXA Venus Climate Orbiter', visible: true },
+    { id: 'context',  name: 'Solar System context', desc: 'Directions to each major body', visible: true },
+    { id: 'stars',    name: 'Starfield',        desc: 'Procedural background stars', visible: true },
+  ];
+
+  function setLayerVisible(id, on) {
+    var l = LAYERS.find(function(x) { return x.id === id; });
+    if (!l) return;
+    l.visible = on;
+    switch (id) {
+      case 'surface':  planet.visible = on; break;
+      case 'features': surfaceFeatures.visible = on; break;
+      case 'venera':   veneraGroup.visible = on; break;
+      case 'akatsuki': akatsukiGroup.visible = on; break;
+      case 'context':  if (solarSystemGroup) solarSystemGroup.visible = on; break;
+      case 'stars':    if (starfield) starfield.visible = on; break;
+    }
+    renderLayerList();
+  }
+
+  function renderLayerList() {
+    var list = document.getElementById('layer-list');
+    if (!list) return;
+    var html = '';
+    LAYERS.forEach(function(l) {
+      html += '<div class="ly-item" data-layer="' + l.id + '">' +
+              '<div class="ly-check ' + (l.visible ? 'on' : '') + '"></div>' +
+              '<div class="ly-body"><div class="ly-name">' + l.name + '</div><div class="ly-desc">' + l.desc + '</div></div>' +
+              '</div>';
+    });
+    list.innerHTML = html;
+    list.querySelectorAll('.ly-item').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var id = el.getAttribute('data-layer');
+        var l = LAYERS.find(function(x) { return x.id === id; });
+        if (l) setLayerVisible(id, !l.visible);
+      });
+    });
+  }
+  renderLayerList();
 
 })();
 
