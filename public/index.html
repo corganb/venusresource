@@ -152,6 +152,10 @@
   .time-ctl button { background: transparent; border: 1px solid var(--b2); color: var(--t2); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
   .time-ctl button.on { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
   .time-ctl button:hover { border-color: var(--accent); }
+
+  /* Reset view button - floating bottom-left of the viewer */
+  #reset-view { position: absolute; bottom: 12px; left: 12px; z-index: 55; width: 38px; height: 38px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border: 1px solid var(--b2); border-radius: 6px; color: var(--t2); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.15s, border-color 0.15s; }
+  #reset-view:hover { color: var(--accent); border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -207,6 +211,7 @@
 
   <div class="viewer">
     <canvas id="scene"></canvas>
+      <button id="reset-view" title="Reset view" aria-label="Reset view">&#8634;</button>
 
     <div id="dsn-panel">
       <div class="dsn-head"><span id="dsn-dot" class="dsn-dot"></span> Deep Space Network</div>
@@ -218,7 +223,8 @@
 <div class="statusbar">
   <div class="statusbar-cell"><span class="label">FRAME</span><span class="value">Body-Fixed</span></div>
   <div class="statusbar-cell"><span class="label">BODY</span><span class="value">Venus</span></div>
-  <div class="sb-cells-right">
+  <div class="statusbar-cell"><span class="label">SIM TIME</span><span class="value" id="sim-time">0s</span></div>
+    <div class="sb-cells-right">
     <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.2</span></div>
   </div>
 </div>
@@ -416,7 +422,7 @@
     window.__venus_updateMoons = function() {
       var __rs_now = Date.now() / 1000;
     var __rs_ts = ((typeof window !== "undefined" && window.__rs_time_scale != null) ? window.__rs_time_scale : 60);
-    __rs_sim_time += (__rs_now - __rs_last_wall) * __rs_ts;
+    __rs_sim_time += (__rs_now - __rs_last_wall) * __rs_ts; window.__rs_sim_time = __rs_sim_time;
     __rs_last_wall = __rs_now;
     var simTime = __rs_sim_time;
       var n = (Math.PI * 2) / AKA.period;
@@ -623,6 +629,45 @@
         b.classList.add('on');
       });
     });
+  })();
+
+
+  // ═══ RESET VIEW BUTTON ═══
+  // Captures the initial camera position/target and resets to it on click.
+  var __rs_initialCamPos = camera.position.clone();
+  var __rs_initialTarget = controls.target.clone();
+  (function wireReset() {
+    var btn = document.getElementById('reset-view');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      camera.position.copy(__rs_initialCamPos);
+      controls.target.copy(__rs_initialTarget);
+      controls.update();
+    });
+  })();
+
+
+  // ═══ SIM TIME READOUT ═══
+  // Formats the shared accumulator as D/H/M/S and writes to the status bar.
+  (function simTimeReadout() {
+    var el = document.getElementById('sim-time');
+    if (!el) return;
+    function fmt(sec) {
+      sec = Math.floor(sec);
+      var d = Math.floor(sec / 86400);
+      sec -= d * 86400;
+      var h = Math.floor(sec / 3600);
+      sec -= h * 3600;
+      var m = Math.floor(sec / 60);
+      sec -= m * 60;
+      if (d) return d + 'd ' + h + 'h ' + m + 'm';
+      if (h) return h + 'h ' + m + 'm ' + sec + 's';
+      if (m) return m + 'm ' + sec + 's';
+      return sec + 's';
+    }
+    setInterval(function() {
+      var t = (typeof __rs_sim_time !== 'undefined') ? __rs_sim_time : (window.__rs_sim_time || 0); el.textContent = fmt(t);
+    }, 1000);
   })();
 
 })();
