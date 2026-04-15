@@ -601,7 +601,7 @@
 // ═══ DSN LIVE PANEL (shared Supabase edge function) ═══
 (function initDSN() {
   var URL_ = 'https://pxocavaczfjcpvqeiznt.supabase.co/functions/v1/dsn-status';
-  var KEY = 'sb_publishable_1IZ6cL3vvPdAc1f8u2ah6w_-txoo_VL';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4b2NhdmFjemZqY3B2cWVpem50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA3MDcsImV4cCI6MjA5MDExNjcwN30.48A2xW4YoGCESsVurxmW3MP9x_lq2AJ8XeS8nR2RVGI';
   function poll() {
     fetch(URL_, { headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY } })
       .then(function(r) { return r.json(); })
