@@ -375,11 +375,11 @@
     labelCanvas.width = 256;
     labelCanvas.height = 48;
     var lctx = labelCanvas.getContext('2d');
-    lctx.font = 'bold 22px -apple-system, sans-serif';
+    lctx.font = '500 16px -apple-system, sans-serif';
     lctx.textAlign = 'center';
     lctx.textBaseline = 'middle';
     lctx.strokeStyle = '#000';
-    lctx.lineWidth = 4;
+    lctx.lineWidth = 3;
     lctx.strokeText('Akatsuki', 128, 24);
     lctx.fillStyle = '#ffddaa';
     lctx.fillText('Akatsuki', 128, 24);
@@ -494,7 +494,7 @@
       var ux = dx / mag, uy = dy / mag, uz = dz / mag;
 
       // Marker sphere
-      var markerGeo = new THREE.SphereGeometry(0.18, 16, 12);
+      var markerGeo = new THREE.SphereGeometry(0.06, 12, 8);
       var markerMat = new THREE.MeshBasicMaterial({ color: b.color });
       var marker = new THREE.Mesh(markerGeo, markerMat);
       marker.position.set(ux * RADIUS, uz * RADIUS, uy * RADIUS); // swap y<->z for Three.js convention
@@ -505,16 +505,16 @@
       var c = document.createElement('canvas');
       c.width = 256; c.height = 48;
       var lctx = c.getContext('2d');
-      lctx.font = 'bold 22px -apple-system, sans-serif';
+      lctx.font = '500 16px -apple-system, sans-serif';
       lctx.textAlign = 'center'; lctx.textBaseline = 'middle';
-      lctx.strokeStyle = '#000'; lctx.lineWidth = 4;
+      lctx.strokeStyle = '#000'; lctx.lineWidth = 3;
       lctx.strokeText(b.name, 128, 24);
       lctx.fillStyle = b.color;
       lctx.fillText(b.name, 128, 24);
       var tex = new THREE.CanvasTexture(c);
       var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
-      sp.scale.set(0.8, 0.15, 1);
-      sp.position.set(0, 0.3, 0);
+      sp.scale.set(0.45, 0.085, 1);
+      sp.position.set(0, 0.12, 0);
       marker.add(sp);
     });
 
