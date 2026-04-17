@@ -93,6 +93,8 @@
   /* Main content */
   .content { flex: 1; position: relative; display: flex; min-height: 0; }
   .sidebar-left { width: 260px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border-right: 1px solid var(--b1); overflow-y: auto; padding: 10px; font-size: 11px; color: var(--t2); flex-shrink: 0; transition: transform 0.2s; }
+
+  .sidebar-left.shut { width: 0; padding: 0; overflow: hidden; border: none; opacity: 0; transition: width 0.2s, opacity 0.2s; }
   .sidebar-left h3 { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); margin: 12px 0 6px; font-weight: 500; }
   .sidebar-left .info-row { padding: 4px 0; display: flex; justify-content: space-between; color: var(--t3); border-bottom: 1px dashed rgba(255,255,255,0.04); }
   .sidebar-left .info-row span:last-child { color: var(--t2); }
@@ -161,27 +163,7 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="tb-left">
-    <div class="tb-brand" onclick="window.location.reload()">
-      <div class="tb-brand-mark"></div>
-      <div>
-        VENUS RESOURCE<br>
-        <span class="tb-subtitle">a Corgan Studio intelligence platform</span>
-      </div>
-    </div>
-  </div>
-  <div class="tb-center">
-    <div class="planet-nav" id="planet-nav"></div>
-  </div>
-  <div class="tb-right">
-    <div id="auth-btn-container"></div>
-      <div id="foot-links-container"></div>
-  </div>
-</div>
-
-<button class="sb-toggle" id="mobile-sb-toggle" onclick="document.querySelector('.sidebar-left').classList.toggle('open')">&#9776;</button>
-
+<div class="topbar" id="rs-topbar" style="height:52px;padding:0 20px;display:flex;align-items:center;position:relative"></div>
 <div class="content">
   <div class="sidebar-left">
     <h3>Body Facts</h3>
@@ -235,7 +217,7 @@
 <!-- Three.js (via jsdelivr UMD) -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="resource-systems-core.js?v=13"></script>
+<script src="resource-systems-core.js?v=14"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
@@ -673,24 +655,13 @@
 
 })();
 
-// ═══ TOP BAR WIRING (shared core) ═══
+// ═══ TOP BAR WIRING (centralized via RS.renderTopBar) ═══
 (function initTopBar() {
   function ready() {
-    var brandEl = document.querySelector('.tb-brand-mark');
-    if (brandEl && RS && RS.BRAND_MARKS) {
-      brandEl.innerHTML = RS.BRAND_MARKS['venus'] || RS.BRAND_MARKS.solarsystem || '';
-    }
-    var navEl = document.getElementById('planet-nav');
-    if (navEl && RS && RS.renderPlanetNav) {
-      try { navEl.innerHTML = RS.renderPlanetNav('venus'); } catch(e) {}
-    }
-    var authEl = document.getElementById('auth-btn-container');
-    if (authEl && RS && RS.renderAuthButton) {
-      try { authEl.innerHTML = RS.renderAuthButton(); } catch(e) {}
-    var footEl = document.getElementById('foot-links-container');
-    if (footEl && RS && RS.renderFootLinks) {
-      try { footEl.innerHTML = RS.renderFootLinks(); } catch(e) {}
-    }
+    var bar = document.getElementById('rs-topbar');
+    if (bar && window.RS && RS.renderTopBar) {
+      bar.innerHTML = RS.renderTopBar('venus', 'VENUS RESOURCE');
+      RS.wireTopBar();
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
