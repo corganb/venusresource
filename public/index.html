@@ -505,25 +505,33 @@
     solarSystemGroup.visible = true;
   })();
 
-  // Subtle starfield (toggleable).
-  var starfield;
-  (function stars() {
-    var geo = new THREE.BufferGeometry();
-    var count = 3000;
-    var pos = new Float32Array(count * 3);
-    for (var i = 0; i < count; i++) {
-      var r = 600 + Math.random() * 400;
-      var th = Math.random() * Math.PI * 2;
-      var ph = Math.acos(2 * Math.random() - 1);
-      pos[i*3]   = r * Math.sin(ph) * Math.cos(th);
-      pos[i*3+1] = r * Math.sin(ph) * Math.sin(th);
-      pos[i*3+2] = r * Math.cos(ph);
-    }
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    var mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, sizeAttenuation: false, transparent: true, opacity: 0.8 });
-    starfield = new THREE.Points(geo, mat);
-    scene.add(starfield);
+  // Real Milky Way skybox from NASA star catalog imagery (same cubemap
+  // used on Terra, Moon, and Mars Cesium sites). Loads 6 face textures
+  // from the Terra CDN and sets them as the scene background so the
+  // starfield shows real constellation patterns and the Milky Way band.
+  var starfield = { visible: true };  // proxy for sidebar toggle
+  var _origBackground = null;
+  (function loadSkybox() {
+    var loader = new THREE.CubeTextureLoader();
+    var base = 'https://terraresource.net/assets/';
+    loader.load([
+      base + 'skybox_positiveX.jpg', base + 'skybox_negativeX.jpg',
+      base + 'skybox_positiveY.jpg', base + 'skybox_negativeY.jpg',
+      base + 'skybox_positiveZ.jpg', base + 'skybox_negativeZ.jpg',
+    ], function(tex) {
+      scene.background = tex;
+      _origBackground = tex;
+    });
   })();
+  // Sidebar toggle support: flipping starfield.visible swaps the
+  // scene background between the cubemap and solid black.
+  Object.defineProperty(starfield, 'visible', {
+    set: function(v) {
+      this._v = v;
+      scene.background = v ? (_origBackground || new THREE.Color('#000000')) : new THREE.Color('#000000');
+    },
+    get: function() { return this._v !== false; }
+  });
 
   // Controls
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
