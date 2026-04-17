@@ -217,7 +217,7 @@
 <!-- Three.js (via jsdelivr UMD) -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="resource-systems-core.js?v=14"></script>
+<script src="resource-systems-core.js?v=15"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
@@ -260,6 +260,14 @@
   tiltGroup.rotation.z = 3.095516; // 177.36 deg axial tilt (Venus is effectively upside down)
   scene.add(tiltGroup);
   tiltGroup.add(planet);
+
+  planet.userData = { _analysis: {
+    name: 'Venus', type: 'Terrestrial planet',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Venus_from_Mariner_10.jpg/220px-Venus_from_Mariner_10.jpg',
+    desc: 'Hottest planet due to runaway greenhouse effect (surface ~462C). Retrograde rotation (spins backward). Dense CO2 atmosphere with sulfuric acid clouds. Surface pressure 92x Earth.',
+    fields: [{label:'Radius',value:'6,051.8 km'},{label:'Mass',value:'4.867 x 10\u00B2\u2074 kg'},{label:'Surface temp',value:'462 C'},{label:'Atmosphere',value:'96.5% CO\u2082'},{label:'Surface pressure',value:'92 atm'},{label:'Sidereal day',value:'243 days (retrograde)'}],
+  }};
+
 
   // ═══ SURFACE FEATURE MARKERS (child of planet - rotates with spin) ═══
   // Grouped so the "Surface features" toggle hides montes/terra/planum and
@@ -622,6 +630,41 @@
     });
   })();
 
+
+
+  // ═══ ANALYSIS PANEL CLICK HANDLER ═══
+  (function wireAnalysis() {
+    var rc = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+    canvas.addEventListener('click', function(ev) {
+      if (!window.RS || !RS.showAnalysisPanel) return;
+      var rect = canvas.getBoundingClientRect();
+      mouse.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+      rc.setFromCamera(mouse, camera);
+      var targets = [];
+      // Collect all meshes in tiltGroup (moons, spacecraft, markers)
+      tiltGroup.traverse(function(obj) {
+        if (obj.isMesh && obj.userData && obj.userData._analysis) targets.push(obj);
+      });
+      // Also check planet itself
+      if (planet && planet.userData && planet.userData._analysis) targets.push(planet);
+      // Check scene-level groups
+      scene.traverse(function(obj) {
+        if (obj.isMesh && obj.userData && obj.userData._analysis && targets.indexOf(obj) === -1) targets.push(obj);
+      });
+      var hits = rc.intersectObjects(targets, true);
+      if (!hits.length) return;
+      var obj = hits[0].object;
+      for (var i = 0; i < 5; i++) {
+        if (obj.userData && obj.userData._analysis) break;
+        if (obj.parent) obj = obj.parent; else break;
+      }
+      if (obj.userData && obj.userData._analysis) {
+        RS.showAnalysisPanel(obj.userData._analysis);
+      }
+    });
+  })();
 
   // ═══ RESET VIEW BUTTON ═══
   // Captures the initial camera position/target and resets to it on click.
