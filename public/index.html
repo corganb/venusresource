@@ -293,11 +293,16 @@
     (parent || surfaceFeatures).add(mesh);
     return mesh;
   }
-  addSurfaceMarker(65, 3, 0xffcc77, 0.025);      // Maxwell Montes: highest peak ~11 km
-  addSurfaceMarker(0, 100, 0xffaa55, 0.022);     // Aphrodite Terra: equatorial continent
-  addSurfaceMarker(70, 350, 0xff8833, 0.018);    // Lakshmi Planum: Ishtar Terra volcanic plain
-  addSurfaceMarker(-5, 351, 0x8888ff, 0.015, veneraGroup);   // Venera 7 (1970-12-15)
-  addSurfaceMarker(-7.5, 303, 0x8888ff, 0.015, veneraGroup); // Venera 13 (1982-03-01)
+  var maxwellM = addSurfaceMarker(65, 3, 0xffcc77, 0.025);
+  maxwellM.userData = { _analysis: { name: 'Maxwell Montes', type: 'Mountain range', desc: 'Highest mountain on Venus at ~11 km. Located in Ishtar Terra. Radar-bright, possibly coated with metallic frost (lead sulfide or bismuth sulfide) that condenses at high altitude.', fields: [{label:'Height',value:'~11 km'},{label:'Location',value:'65 N, 3 E'},{label:'Region',value:'Ishtar Terra'},{label:'Mapped by',value:'Magellan (1990)'}], icon: '\u26F0' } };
+  var aphroditeM = addSurfaceMarker(0, 100, 0xffaa55, 0.022);
+  aphroditeM.userData = { _analysis: { name: 'Aphrodite Terra', type: 'Highland continent', desc: 'Largest highland region on Venus, stretching ~10,000 km along the equator. Roughly the size of Africa. Contains deep rift valleys (Diana and Dali Chasmata) and major volcanic centers.', fields: [{label:'Length',value:'~10,000 km'},{label:'Location',value:'Equatorial'},{label:'Features',value:'Rift valleys, volcanoes'}], icon: '\u26F0' } };
+  var lakshmiM = addSurfaceMarker(70, 350, 0xff8833, 0.018);
+  lakshmiM.userData = { _analysis: { name: 'Lakshmi Planum', type: 'Volcanic plateau', desc: 'High volcanic plain in western Ishtar Terra. Bordered by mountain ranges including Maxwell Montes. Two large calderas (Colette and Sacajawea) on the surface.', fields: [{label:'Elevation',value:'~4 km above mean'},{label:'Location',value:'70 N, 350 E'},{label:'Calderas',value:'Colette, Sacajawea'}], icon: '\u26F0' } };
+  var venera7M = addSurfaceMarker(-5, 351, 0x8888ff, 0.015, veneraGroup);
+  venera7M.userData = { _analysis: { name: 'Venera 7 landing site', type: 'Historical landing', desc: 'First successful landing on another planet (1970-12-15). Transmitted data for 23 minutes from the surface. Measured temperature of 475 C and pressure of 90 atm.', fields: [{label:'Date',value:'1970-12-15'},{label:'Duration',value:'23 min surface data'},{label:'Temp measured',value:'475 C'},{label:'Pressure',value:'90 atm'}], icon: '\uD83D\uDE80' } };
+  var venera13M = addSurfaceMarker(-7.5, 303, 0x8888ff, 0.015, veneraGroup);
+  venera13M.userData = { _analysis: { name: 'Venera 13 landing site', type: 'Historical landing', desc: 'First color photographs from Venus surface (1982-03-01). Survived 127 minutes. Analyzed soil composition with X-ray fluorescence, finding leucitic basalt.', fields: [{label:'Date',value:'1982-03-01'},{label:'Duration',value:'127 min'},{label:'Soil type',value:'Leucitic basalt'},{label:'First color images',value:'Yes'}], icon: '\uD83D\uDE80' } };
 
   // ═══ AKATSUKI ORBITER MARKER (JAXA) ═══
   // Akatsuki is parented to akatsukiGroup so the sidebar can toggle the
