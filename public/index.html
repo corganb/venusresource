@@ -460,7 +460,7 @@
   var solarSystemGroup;
   (function buildSolarSystemLayer() {
     var PRIMARY_NAME = 'Venus';
-    var RADIUS = 15;
+    var RADIUS = 150;
     var BODIES = [
       { name: 'Sun',     color: '#FFD54F', url: 'https://sunresource.net' },
       { name: 'Mercury', color: '#a0a0a0', url: 'https://mercuryresource.net' },
@@ -506,7 +506,14 @@
       var ux = dx / mag, uy = dy / mag, uz = dz / mag;
 
       // Marker sphere
-      var markerGeo = new THREE.SphereGeometry(0.06, 12, 8);
+      var diam = (function(){
+        if (b.name === 'Sun') return 1392700;
+        var pd = (window.RS && RS.PLANETS_DATA) ? RS.PLANETS_DATA.find(function(x){ return x.name === b.name; }) : null;
+        return pd ? pd.diam : 12742;
+      })();
+      // sqrt(diam / Earth_diam) keeps Sun visible without dwarfing planets
+      var markerR = 0.6 * Math.sqrt(diam / 12742);
+      var markerGeo = new THREE.SphereGeometry(markerR, 16, 12);
       var markerMat = new THREE.MeshBasicMaterial({ color: b.color });
       var marker = new THREE.Mesh(markerGeo, markerMat);
       marker.position.set(ux * RADIUS, uz * RADIUS, uy * RADIUS); // swap y<->z for Three.js convention
@@ -583,7 +590,7 @@
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.minDistance = 2.2;
-  controls.maxDistance = 200;
+  controls.maxDistance = 400;
 
   // Resize
   window.addEventListener('resize', function () {
@@ -595,7 +602,7 @@
   // Animate
   function tick() {
     requestAnimationFrame(tick);
-    planet.rotation.y += -0.0000003;
+    planet.rotation.y += -0.0000003 * ((window.__rs_time_scale != null ? window.__rs_time_scale : 60) / 60);
     updateMoons();
     controls.update();
     renderer.render(scene, camera);
