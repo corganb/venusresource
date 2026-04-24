@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiki | VenusResource | Resource Systems by Corgan Studio, Inc.</title>
+<meta name="description" content="Reference wiki for Venus: physical parameters, structure, active missions, and scientific data sources.">
+<link rel="canonical" href="https://venusresource.net/wiki">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0c10; color: rgba(245,248,255,0.95); font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1.7; }
+  .container { max-width: 820px; margin: 0 auto; padding: 60px 24px; }
+  .back { display: inline-block; color: #d8a065; text-decoration: none; font-size: 12px; letter-spacing: 0.05em; margin-bottom: 40px; opacity: 0.7; }
+  .back:hover { opacity: 1; }
+  h1 { font-size: 30px; font-weight: 600; margin-bottom: 8px; color: #d8a065; }
+  .subtitle { font-size: 12px; color: rgba(160,172,200,0.65); margin-bottom: 48px; letter-spacing: 0.04em; }
+  h2 { font-size: 16px; font-weight: 600; color: #d8a065; margin: 40px 0 12px; letter-spacing: 0.04em; }
+  p { font-size: 13px; color: rgba(160,172,200,0.85); margin-bottom: 12px; }
+  .table { display: grid; grid-template-columns: 180px 1fr; gap: 10px 24px; font-size: 12.5px; margin: 16px 0; }
+  .table .k { color: rgba(200,210,230,0.7); }
+  .table .v { color: rgba(160,172,200,0.85); }
+  .mission { border-left: 2px solid rgba(216,160,101,0.3); padding-left: 14px; margin-bottom: 20px; }
+  .mission-name { font-size: 14px; font-weight: 600; color: rgba(200,210,230,0.95); margin-bottom: 4px; }
+  .mission-meta { font-size: 11px; color: rgba(130,145,175,0.7); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .mission-desc { font-size: 12.5px; color: rgba(160,172,200,0.8); }
+  .feature { margin-bottom: 14px; }
+  .feature-name { font-size: 13px; font-weight: 600; color: #d8a065; margin-bottom: 2px; }
+  .feature-desc { font-size: 12.5px; color: rgba(160,172,200,0.8); }
+  a { color: #d8a065; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .sources { font-size: 11px; color: rgba(130,145,175,0.6); margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer { margin-top: 48px; font-size: 11px; color: rgba(130,145,175,0.50); display: flex; gap: 16px; flex-wrap: wrap; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer a { color: rgba(160,172,200,0.65); }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back">&larr; Back to VenusResource</a>
+  <h1>Venus Reference Wiki</h1>
+  <div class="subtitle">Physical parameters, structure, active missions, and scientific data sources</div>
+
+  <h2>Overview</h2>
+  <p>Venus is the second planet from the Sun and the hottest in the Solar System due to a runaway greenhouse effect. A dense CO2 atmosphere and sulfuric acid clouds produce surface temperatures of 465 C and pressures 92 times Earth. Venus rotates retrograde, its day being longer than its year.</p>
+
+  <h2>Physical parameters</h2>
+  <div class="table">
+    <div class="k">Type</div><div class="v">Terrestrial planet</div>
+    <div class="k">Radius</div><div class="v">6,051.8 km</div>
+    <div class="k">Mass</div><div class="v">4.867 x 10^24 kg (0.815 Earth)</div>
+    <div class="k">Surface gravity</div><div class="v">8.87 m/s^2</div>
+    <div class="k">Semi-major axis</div><div class="v">0.723 AU (108.2 million km)</div>
+    <div class="k">Orbital period</div><div class="v">224.7 days</div>
+    <div class="k">Rotation period</div><div class="v">243 days (retrograde)</div>
+    <div class="k">Axial tilt</div><div class="v">177.36 degrees</div>
+    <div class="k">Surface temperature</div><div class="v">465 C (average)</div>
+    <div class="k">Surface pressure</div><div class="v">92 atm (92 bar)</div>
+    <div class="k">Atmosphere</div><div class="v">96.5% CO2, 3.5% N2, traces SO2 and H2SO4 clouds</div>
+    <div class="k">Moons</div><div class="v">0</div>
+  </div>
+
+  <h2>Active missions</h2>
+  <div class="mission">
+    <div class="mission-name">Mariner 2 (NASA)</div>
+    <div class="mission-meta">Flyby 1962</div>
+    <div class="mission-desc">First successful planetary flyby. Confirmed extreme surface temperatures.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Venera 7 (USSR)</div>
+    <div class="mission-meta">Landed 1970-12-15</div>
+    <div class="mission-desc">First spacecraft to soft-land on another planet. Transmitted data for 23 minutes from the surface.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Venera 13 (USSR)</div>
+    <div class="mission-meta">Landed 1982-03-01</div>
+    <div class="mission-desc">First color photographs from Venus surface. Survived 127 minutes and analyzed soil composition.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Magellan (NASA)</div>
+    <div class="mission-meta">Orbit 1990-1994</div>
+    <div class="mission-desc">Radar-mapped 98% of the surface at 100m resolution through the cloud layer.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Venus Express (ESA)</div>
+    <div class="mission-meta">Orbit 2006-2014</div>
+    <div class="mission-desc">Studied atmosphere, plasma environment, and surface heat emission.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Akatsuki (JAXA)</div>
+    <div class="mission-meta">Orbit since 2015</div>
+    <div class="mission-desc">Currently active Japanese climate orbiter studying cloud dynamics and atmospheric circulation in multi-wavelength imagery.</div>
+  </div>
+
+  <h2>Notable features</h2>
+  <div class="feature">
+    <div class="feature-name">Maxwell Montes</div>
+    <div class="feature-desc">Highest mountain on Venus (~11 km). Possibly coated with metallic frost (lead or bismuth sulfide).</div>
+  </div>
+  <div class="feature">
+    <div class="feature-name">Aphrodite Terra</div>
+    <div class="feature-desc">Continent-sized highland region near the equator.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-name">Ishtar Terra</div>
+    <div class="feature-desc">Northern highland region containing Maxwell Montes.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-name">Greenhouse atmosphere</div>
+    <div class="feature-desc">Thick CO2 blanket traps heat; supercritical CO2 at the surface behaves more like a fluid than a gas.</div>
+  </div>
+
+  <h2>Further reading</h2>
+  <p><a href="https://science.nasa.gov/venus/" target="_blank">NASA Venus</a></p>
+  <p><a href="https://en.wikipedia.org/wiki/Venus" target="_blank">Wikipedia: Venus</a></p>
+  <p><a href="https://global.jaxa.jp/projects/sat/planet_c/" target="_blank">Akatsuki mission</a></p>
+
+  <div class="sources">
+    Physical parameters sourced from NASA fact sheets and IAU nominal values. Mission summaries compiled from operator pages (NASA, ESA, JAXA, CNSA). All values are current as of the page publish date and may be refreshed periodically.
+  </div>
+
+  <div class="footer">
+    <a href="/">Home</a>
+    <a href="/faq">FAQ</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <span style="margin-left:auto">&copy; 2025-2026 Corgan Studio, Inc.</span>
+  </div>
+</div>
+</body>
+</html>
