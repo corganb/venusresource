@@ -511,6 +511,22 @@
       var marker = new THREE.Mesh(markerGeo, markerMat);
       marker.position.set(ux * RADIUS, uz * RADIUS, uy * RADIUS); // swap y<->z for Three.js convention
       marker.userData.url = b.url;
+      marker.userData._analysis = (function() {
+        var pd = (window.RS && RS.PLANETS_DATA) ? RS.PLANETS_DATA.find(function(x){ return x.name === b.name; }) : null;
+        var fields = pd ? [
+          { label: 'Semi-major axis', value: pd.a + ' AU' },
+          { label: 'Eccentricity',    value: pd.e.toFixed(4) },
+          { label: 'Inclination',     value: pd.i + ' deg' },
+          { label: 'Diameter',        value: pd.diam.toLocaleString() + ' km' },
+        ] : [];
+        return {
+          name: b.name,
+          type: b.name === 'Sun' ? 'Star (Resource Systems sibling)' : 'Planet (Resource Systems sibling)',
+          desc: (pd && pd.desc) || ('Resource Systems intelligence platform for ' + b.name + '.'),
+          fields: fields,
+          link: { url: b.url, text: 'Open ' + b.name + 'Resource' },
+        };
+      })();
       solarSystemGroup.add(marker);
 
       // Canvas text label
