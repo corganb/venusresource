@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud-level super-rotation: Akatsuki cloud-tracking and dynamical consequences | VenusResource Research Archive</title>
+<meta name="description" content="Review of Venus atmospheric super-rotation at the cloud level, with focus on Akatsuki UVI and IR2 cloud-tracking results, thermal-tide forcing, and the open theoretical question of momentum source.">
+<link rel="canonical" href="/research/venus-cloud-superrotation">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Cloud-level super-rotation: Akatsuki cloud-tracking and dynamical consequences">
+<meta property="og:description" content="Review of Venus atmospheric super-rotation at the cloud level, with focus on Akatsuki UVI and IR2 cloud-tracking results, thermal-tide forcing, and the open theoretical question of momentum source.">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-04-25">
+<meta property="article:author" content="Corgan Studio, Inc.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0c10; color: rgba(245,248,255,0.95); font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1.7; }
+  .container { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; }
+  .back { display: inline-block; color: #e8dcc0; text-decoration: none; font-size: 12px; letter-spacing: 0.05em; margin-bottom: 32px; opacity: 0.7; }
+  .back:hover { opacity: 1; }
+  h1 { font-size: 28px; font-weight: 600; margin-bottom: 10px; color: #e8dcc0; line-height: 1.25; }
+  .abstract { font-size: 14px; color: rgba(200,210,230,0.85); margin-bottom: 16px; max-width: 700px; }
+  .meta { font-size: 11px; color: rgba(160,172,200,0.55); letter-spacing: 0.04em; margin-bottom: 36px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  article h2 { font-size: 13px; font-weight: 600; color: #e8dcc0; margin: 32px 0 12px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+  article p { font-size: 14px; color: rgba(220,228,242,0.9); margin-bottom: 14px; }
+  article p strong { color: rgba(245,248,255,1); }
+  .refs { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .refs h2 { font-size: 12px; font-weight: 600; color: rgba(180,192,210,0.85); margin-bottom: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .refs ol { list-style: decimal; padding-left: 24px; font-size: 12px; color: rgba(180,192,210,0.78); }
+  .refs li { margin-bottom: 8px; line-height: 1.5; }
+  .refs a { color: rgba(180,210,255,0.85); text-decoration: none; word-break: break-all; }
+  .refs a:hover { color: #e8dcc0; }
+  .tier-note { margin-top: 32px; padding: 14px 16px; border-radius: 4px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.30); color: rgba(200,220,245,0.9); font-size: 12px; line-height: 1.6; }
+  .tier-note strong { color: #7eb6ff; }
+  .tier-note .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: rgba(80,140,220,0.15); border: 1px solid rgba(80,140,220,0.4); color: #7eb6ff; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 8px; vertical-align: middle; }
+  .tier-note a { color: #7eb6ff; }
+  .footer { margin-top: 48px; font-size: 11px; color: rgba(130,145,175,0.5); display: flex; gap: 16px; flex-wrap: wrap; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer a { color: rgba(160,172,200,0.65); text-decoration: none; }
+  .footer a:hover { color: rgba(200,210,230,0.9); }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/research" class="back">&larr; Research Archive</a>
+  <h1>Cloud-level super-rotation: Akatsuki cloud-tracking and dynamical consequences</h1>
+  <div class="abstract">Review of Venus atmospheric super-rotation at the cloud level, with focus on Akatsuki UVI and IR2 cloud-tracking results, thermal-tide forcing, and the open theoretical question of momentum source.</div>
+  <div class="meta">2026-04-25 &middot; 6 min read &middot; Reviewed by Corgan Studio, Inc.</div>
+
+  <article>
+
+    <h2>Introduction</h2>
+    <p>The Venus atmosphere rotates retrograde at the cloud level (50-70 km altitude) with a four-day period - sixty times faster than the planet's solid-body sidereal rotation period of 243 Earth days. This atmospheric super-rotation has no Solar-System analog at comparable strength. Its discovery dates to the 1960s, but the dynamical maintenance mechanism remains an active research question. JAXA's Akatsuki orbiter, in Venus orbit since December 2015, has provided the longest-baseline, highest-cadence cloud-tracking data set to date.</p>
+
+    <h2>Observational baseline</h2>
+    <p>Cloud-top winds were first measured from Mariner 10 imaging in 1974, refined by Pioneer Venus and Vega-1/2, and extended through Venus Express (2006-2014). Akatsuki carries the UVI imager (283 and 365 nm) for upper cloud (70 km) tracking, the IR2 imager (1.74 to 2.32 micron) for middle and lower cloud (45-50 km) tracking, and the LIR thermal imager for cloud-top temperature mapping. Cloud-tracking velocity fields from the combined instrument suite reach approximately 400 km horizontal resolution at typical orbital geometries.</p>
+
+    <h2>Mean zonal wind structure</h2>
+    <p>The mean zonal wind is approximately 100 m/s at the cloud top (70 km) at low latitudes, decreasing to 60-70 m/s at middle cloud levels (50 km), and to nearly zero at the surface. The wind structure is approximately symmetric about the equator with mid-latitude jets at 40 to 50 degrees latitude. The cloud-top wind shows a robust 4-5 day variability that Horinouchi et al. (2017, Nature Geoscience) identified as a planetary-scale Kelvin-wave signature, consistent with thermal-tide forcing modulated by topography.</p>
+
+    <h2>Thermal-tide forcing</h2>
+    <p>The dominant theoretical framework for super-rotation maintenance is the thermal-tide mechanism originally proposed by Fels and Lindzen (1974). In this picture, solar heating of the cloud-deck atmosphere drives an upward-propagating semidiurnal thermal tide that transports angular momentum equatorward. The momentum convergence at low latitudes pumps the equatorial atmosphere into super-rotation, balancing dissipation by molecular and eddy viscosity.</p>
+    <p>Akatsuki measurements have validated several quantitative predictions of the thermal-tide framework. The semidiurnal tide is observable in cloud-top temperature and velocity fields at the predicted phase. The momentum flux divergence inferred from cloud-tracking agrees within a factor of two with the dissipation rate required to balance super-rotation. However, the thermal tide alone is insufficient to maintain super-rotation in three-dimensional general circulation models: an additional contribution from gravity waves, baroclinic eddies, or boundary-layer mixing is required.</p>
+
+    <h2>Polar vortex and dipole</h2>
+    <p>The Akatsuki LIR thermal imager has resolved the structure of the Venus polar vortex. The vortex displays a quasi-stable, but rapidly evolving, dipole pattern with two warm filaments rotating around the pole at periods of 2-3 days. The dipole geometry departs strongly from the simple axisymmetric vortex predicted by zonal-mean theory and indicates a finite-amplitude planetary wave embedded in the polar circulation. The persistence of the dipole over many rotation periods despite continuous turbulent eddy activity is itself a constraint on the dissipation regime.</p>
+
+    <h2>Open questions</h2>
+    <p>Several first-order questions remain open. The vertical profile of momentum forcing between the surface and the cloud top is not directly observable; it must be inferred from cloud-tracked winds at limited altitudes. Recent reanalyses combining Akatsuki tracking with Venus Express data suggest that gravity-wave drag in the lower mesosphere is more important than previously assumed, but the spatial pattern is poorly constrained. The role of the surface topography in setting the planetary-wave structure is unclear: Maxwell Montes and Aphrodite Terra are large enough to produce stationary forcing, but the cloud-tracked wind field shows only weak topographic correlations.</p>
+
+    <h2>Outlook</h2>
+    <p>Three Venus missions are in development for late-2020s and 2030s flight. NASA's DAVINCI descent probe will deliver high-resolution in-situ wind measurements during atmospheric entry. NASA's VERITAS will provide global topography and tectonic mapping that constrains stationary-wave forcing. ESA's EnVision will combine atmosphere-sounding and surface-radar capabilities. The combination will move the Venus dynamics community from cloud-top tracking alone to a vertically resolved, surface-to-mesosphere data set.</p>
+  </article>
+
+  <div class="refs">
+    <h2>References</h2>
+    <ol>
+      <li><a href="https://global.jaxa.jp/projects/sas/planet_c/" target="_blank" rel="noopener">JAXA Akatsuki mission</a></li>
+      <li><a href="https://science.nasa.gov/mission/davinci/" target="_blank" rel="noopener">NASA DAVINCI</a></li>
+      <li><a href="https://www.nature.com/articles/ngeo3016" target="_blank" rel="noopener">Horinouchi T., et al. (2017) Equatorial jet in the lower to middle cloud layer of Venus revealed by Akatsuki. Nature Geoscience</a></li>
+      <li><a href="https://link.springer.com/article/10.1007/s11214-017-0389-x" target="_blank" rel="noopener">Sanchez-Lavega A., et al. (2017) The atmospheric dynamics of Venus. Space Science Reviews</a></li>
+    </ol>
+  </div>
+
+  <div class="tier-note"><span class="pill">Researcher</span><strong>Citation exports.</strong> This article is open and free to read. Researcher tier subscribers can download a citation-ready PDF (with formatted bibliography), BibTeX entry, and persistent article identifier for use in published work. <a href="/">See plans</a>.</div>
+
+  <div class="footer">
+    <a href="/">Home</a>
+    <a href="/research">Research Archive</a>
+    <a href="/faq">FAQ</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+  </div>
+</div>
+</body>
+</html>
