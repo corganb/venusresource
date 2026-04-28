@@ -16,7 +16,7 @@
 
 ## Hard rules
 1. **No em dashes.** Anywhere. Use hyphens, colons, or parentheses. Applies to code, UI text, comments, commit messages.
-2. **Cache-bust core.js after edits.** Bump `?v=N` on the `<script src>` tag. Current: `v=18`.
+2. **Cache-bust core.js after edits.** Bump `?v=N` on the `<script src>` tag. Current: `v=24`.
 3. **Verify syntax before pushing.** On the last `<script>` block, check `{` vs `}` balance and even backtick count.
 4. **Commit early, commit often.** One logical change per commit.
 5. **Python or Edit tool for multi-line edits.** Bash heredocs and repeated sed drop characters on this machine.
@@ -24,7 +24,7 @@
 7. **Real data only.** Spacecraft positions, body rotation, and orbital parameters must derive from real sources (ephemerides, NASA mission pages). No placeholders.
 8. **Commit attribution: Corgan Studio, Inc. only.** Never add Co-Authored-By Claude.
 
-## Shared RS.* API (core.js v=18)
+## Shared RS.* API (core.js v=24)
 - `RS.renderTopBar(opts)` - centralized top nav (used across all 9 Three.js siblings + galactic)
 - `RS.renderFootLinks()` - consistent footer nav
 - `RS.showAnalysisPanel(data)` - click-to-inspect detail panel
